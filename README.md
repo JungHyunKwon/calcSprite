@@ -10,4 +10,11 @@ from | number | 원본 크기
 to | number | 변환 크기
 position | number | 좌표
 
+## 반환
+````javascript
+{
+    size : number,
+	position : number
+}
+````
 window객체에 calcSprite이라는 함수로 들어있습니다.
