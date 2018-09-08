@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+	<title>calcSprite</title>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="js/calcSprite.js"></script>
+	<script>
+		$(function() {
+			var $image = $('#image'),
+				$originalWidth = $('#original_width'),
+				$originalHeight = $('#original_height'),
+				$originalPositionX = $('#original_position_x'),
+				$originalPositionY = $('#original_position_y'),
+				$convertWidth = $('#convert_width'),
+				$convertHeight = $('#convert_height'),
+				$width = $('.width'),
+				$height = $('.height'),
+				$backgroundWidth = $('.background_width'),
+				$backgroundHeight = $('.background_height'),
+				$x = $('.x'),
+				$y = $('.y'),
+				$result = $('.result'),
+				sprite = {
+					src : '',
+					width : 0,
+					height : 0
+				};
+
+			function getResult(event) {
+				//src가 있을때
+				if(sprite.src) {
+					var convert = {
+							width : parseFloat($convertWidth.val(), 10),
+							height : parseFloat($convertHeight.val(), 10)
+						},
+						originalPosition = {
+							x : $originalPositionX.val(),
+							y : $originalPositionY.val()
+						};
+					
+					//변환넓이가 있을때
+					if(convert.width > 0) {
+						convert.width += 'px';
+					}else{
+						convert.width = 0;
+					}
+					
+					//변환높이가 있을때
+					if(convert.height > 0) {
+						convert.height += 'px';
+					}else{
+						convert.height = 0;
+					}
+					
+					//원본좌표에 x값이 left일때
+					if(originalPosition.x === 'left') {
+						originalPosition.x = 0;
+					}
+					
+					//원본좌표에 y값이 top일때
+					if(originalPosition.y === 'top') {
+						originalPosition.y = 0;
+					}
+
+					var horizontal = calcSprite(sprite.width, $originalWidth.val(), convert.width, originalPosition.x),
+						vertical = calcSprite(sprite.height, $originalHeight.val(), convert.height, originalPosition.y);
+					
+					//가로 좌표가 있을때
+					if(horizontal.position) {
+						horizontal.position += 'px';
+					}else{
+						horizontal.position = 'left';
+					}
+					
+					//세로 좌표가 있을때
+					if(vertical.position) {
+						vertical.position += 'px';
+					}else{
+						vertical.position = 'top';
+					}
+					
+					//가로 크기가 있을때
+					if(horizontal.size) {
+						horizontal.size += 'px';
+					}
+					
+					//세로 크기가 있을때
+					if(vertical.size) {
+						vertical.size += 'px';
+					}
+					
+					$result.css({
+						width : convert.width,
+						height : convert.height,
+						backgroundColor : '#000',
+						backgroundImage : 'url(' + sprite.src + ')',
+						backgroundRepeat : 'no-repeat',
+						backgroundSize : horizontal.size + ' ' + vertical.size,
+						backgroundPosition : horizontal.position + ' ' + vertical.position
+					});
+
+					$width.text(convert.width);
+					$height.text(convert.height);
+					$backgroundWidth.text(horizontal.size);
+					$backgroundHeight.text(vertical.size);
+					$x.text(horizontal.position);
+					$y.text(vertical.position);
+				}
+			}
+			
+			$image.add($originalWidth).add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).val('');
+
+			$image.on('change', function(event) {
+				var fileReader = new FileReader();
+
+				fileReader.readAsDataURL(this.files[0]);
+				fileReader.onloadend = function(event) {
+					var image = new Image();
+					
+					image.src = event.target.result;
+
+					$(image).on('load', function(event) {
+						sprite.src = image.src;
+						sprite.width = this.width;
+						sprite.height = this.height;
+						getResult(event);
+					});
+				};
+			});
+
+			$originalWidth.add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).on('keyup', getResult);
+		});
+	</script>
+</head>
+<body>
+<h1>calcSprite</h1>
+<ul>
+	<li><label for="image">이미지</label> : <input type="file" id="image" accept="image/*" /></li>
+	<li><label for="original_width">원본넓이</label> : <input type="text" id="original_width" value="61" /></li>
+	<li><label for="original_height">원본높이</label> : <input type="text" id="original_height" value="45" /></li>
+	<li><label for="original_position_x">원본좌표(x)</label> : <input type="text" id="original_position_x" value="0" /></li>
+	<li><label for="original_position_y">원본좌표(y)</label> : <input type="text" id="original_position_y" value="-1642" /></li>
+	<li><label for="convert_width">변환넓이</label> : <input type="text" id="convert_width" value="15" /></li>
+	<li><label for="convert_height">변환높이</label> : <input type="text" id="convert_height" value="15" /></li>
+</ul>
+<h2>결과</h2>
+<ul>
+	<li>width:<span class="width">0</span>;</li>
+	<li>height<span class="height">0</span>;</li>
+	<li>background-size:<span class="background_width">0</span> <span class="background_height">0</span>;</li>
+	<li>background-position:<span class="x">left</span> <span class="y">top</span>;</li>
+</ul>
+<div class="result">&nbsp;</div>
+</body>
+</html>
