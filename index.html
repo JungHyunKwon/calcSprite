@@ -33,7 +33,7 @@
 				$backgroundHeight = $('.background_height'),
 				$x = $('.x'),
 				$y = $('.y'),
-				$type = $('#pixel, #percentage'),
+				$percentage = $('#percentage'),
 				$result = $('.result'),
 				$icon = $('.icon'),
 				sprite = {
@@ -42,7 +42,7 @@
 					height : 0
 				};
 
-			function getResult(event) {
+			function setResult(event) {
 				//src가 있을때
 				if(sprite.src) {
 					var convert = {
@@ -123,8 +123,8 @@
 						}
 					}
 
-					//퍼센트일때
-					if($type.filter(':checked').is('#percentage')) {
+					//퍼센트가 체크되어있을때
+					if($percentage.is(':checked')) {
 						result.horizontal = result.horizontal.percentage;
 						result.vertical = result.vertical.percentage;
 					}else{
@@ -151,7 +151,8 @@
 					$y.text(result.vertical.position);
 				}
 			}
-			
+
+			$percentage.prop('checked', false);
 			$image.add($originalWidth).add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).val('');
 
 			$image.on('change', function(event) {
@@ -167,22 +168,17 @@
 						sprite.src = image.src;
 						sprite.width = this.width;
 						sprite.height = this.height;
-						getResult(event);
+						setResult(event);
 					});
 				};
 			});
 
-			$type.on('change', function(event) {
-				//체크되어있을때
-				if($(this).is(':checked')) {
-					$result.addClass(this.id).removeClass($type.not(this)[0].id);
-					getResult(event);
-				}
-			}).each(function(index, element) {
-				$(element).triggerHandler('change');
+			$percentage.on('change', function(event) {
+				$result.toggleClass(this.id);
+				setResult(event);
 			});
 
-			$originalWidth.add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).on('keyup', getResult);
+			$originalWidth.add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
 		});
 	</script>
 </head>
@@ -196,7 +192,7 @@
 	<li><label for="original_position_y">원본좌표(y)</label> : <input type="text" id="original_position_y" /></li>
 	<li><label for="convert_width">변환넓이</label> : <input type="text" id="convert_width" /></li>
 	<li><label for="convert_height">변환높이</label> : <input type="text" id="convert_height" /></li>
-	<li>유형 : <label for="pixel">픽셀</label><input type="radio" id="pixel" name="type" checked /> <label for="percentage">퍼센트</label><input type="radio" id="percentage" name="type" /></li>
+	<li><label for="percentage">퍼센트 : </label><input type="checkbox" id="percentage" /></li>
 </ul>
 <h2>결과</h2>
 <ul>
