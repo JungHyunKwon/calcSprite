@@ -13,8 +13,14 @@ position | number | 좌표
 ## 반환
 ````javascript
 {
-    size : number,
-    position : number
+    pixel : {
+        size : number,
+	    position : number
+	},
+    percentage : {
+        size : number,
+	    position : number
+	}
 }
 ````
 window객체에 calcSprite이라는 함수로 들어있습니다.

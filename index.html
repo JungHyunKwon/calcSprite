@@ -5,6 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
 	<title>calcSprite</title>
+	<style>
+		@keyframes percentage {
+			from {width:100%; height:100%;}
+			to {width:0; height:0;}
+		}
+		
+		.result {visibility:hidden; opacity:0; transition-property:visibility, opacity; transition-duration:0.25s; transition-timing-function:linear;}
+		.result.active {visibility:visible; opacity:1;}
+		.result.active .icon {width:100%; height:100%; background-repeat:no-repeat; background-color:#000;}
+		.result.percentage.active .icon {animation:percentage 5s linear infinite alternate both;}
+	</style>
 	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 	<script src="js/calcSprite.min.js"></script>
 	<script>
@@ -22,7 +33,9 @@
 				$backgroundHeight = $('.background_height'),
 				$x = $('.x'),
 				$y = $('.y'),
+				$type = $('#pixel, #percentage'),
 				$result = $('.result'),
+				$icon = $('.icon'),
 				sprite = {
 					src : '',
 					width : 0,
@@ -40,7 +53,7 @@
 							x : $originalPositionX.val(),
 							y : $originalPositionY.val()
 						};
-					
+
 					//변환넓이가 있을때
 					if(convert.width > 0) {
 						convert.width += 'px';
@@ -65,49 +78,77 @@
 						originalPosition.y = 0;
 					}
 
-					var horizontal = calcSprite(sprite.width, $originalWidth.val(), convert.width, originalPosition.x),
-						vertical = calcSprite(sprite.height, $originalHeight.val(), convert.height, originalPosition.y);
+					var result = {
+						horizontal : calcSprite(sprite.width, $originalWidth.val(), convert.width, originalPosition.x),
+						vertical : calcSprite(sprite.height, $originalHeight.val(), convert.height, originalPosition.y)
+					};
 					
-					//가로 좌표가 있을때
-					if(horizontal.position) {
-						horizontal.position += 'px';
+					for(var i in result) {
+						for(var j in result[i]) {
+							//픽셀일때
+							if(j === 'pixel') {
+								//좌표가 있을때
+								if(result[i][j].position) {
+									result[i][j].position += 'px';
+								}
+
+								//크기가 있을때
+								if(result[i][j].size) {
+									result[i][j].size += 'px';
+								}
+							}else{
+								//좌표가 있을때
+								if(result[i][j].position) {
+									result[i][j].position += '%';
+								}
+
+								//크기가 있을때
+								if(result[i][j].size) {
+									result[i][j].size += '%';
+								}
+							}
+							
+							//가로일때
+							if(i === 'horizontal') {
+								//좌표가 0일때
+								if(!result[i][j].position) {
+									result[i][j].position = 'left';
+								}
+							}else{
+								//좌표가 0일때
+								if(!result[i][j].position) {
+									result[i][j].position = 'top';
+								}
+							}
+						}
+					}
+
+					//퍼센트일때
+					if($type.filter(':checked').is('#percentage')) {
+						result.horizontal = result.horizontal.percentage;
+						result.vertical = result.vertical.percentage;
 					}else{
-						horizontal.position = 'left';
+						result.horizontal = result.horizontal.pixel;
+						result.vertical = result.vertical.pixel;
 					}
-					
-					//세로 좌표가 있을때
-					if(vertical.position) {
-						vertical.position += 'px';
-					}else{
-						vertical.position = 'top';
-					}
-					
-					//가로 크기가 있을때
-					if(horizontal.size) {
-						horizontal.size += 'px';
-					}
-					
-					//세로 크기가 있을때
-					if(vertical.size) {
-						vertical.size += 'px';
-					}
-					
-					$result.css({
+
+					$result.addClass('active').css({
 						width : convert.width,
-						height : convert.height,
-						backgroundColor : '#000',
+						height : convert.height
+					});
+					
+					$icon.css({
 						backgroundImage : 'url(' + sprite.src + ')',
-						backgroundRepeat : 'no-repeat',
-						backgroundSize : horizontal.size + ' ' + vertical.size,
-						backgroundPosition : horizontal.position + ' ' + vertical.position
+						backgroundSize : result.horizontal.size + ' ' + result.vertical.size,
+						backgroundPosition : result.horizontal.position + ' ' + result.vertical.position
 					});
 
 					$width.text(convert.width);
 					$height.text(convert.height);
-					$backgroundWidth.text(horizontal.size);
-					$backgroundHeight.text(vertical.size);
-					$x.text(horizontal.position);
-					$y.text(vertical.position);
+					$backgroundWidth.text(result.horizontal.size);
+					$backgroundHeight.text(result.vertical.size);
+					$x.text(result.horizontal.position);
+					$y.text(result.vertical.position);
 				}
 			}
 			
@@ -131,6 +172,16 @@
 				};
 			});
 
+			$type.on('change', function(event) {
+				//체크되어있을때
+				if($(this).is(':checked')) {
+					$result.addClass(this.id).removeClass($type.not(this)[0].id);
+					getResult(event);
+				}
+			}).each(function(index, element) {
+				$(element).triggerHandler('change');
+			});
+
 			$originalWidth.add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).on('keyup', getResult);
 		});
 	</script>
@@ -145,6 +196,7 @@
 	<li><label for="original_position_y">원본좌표(y)</label> : <input type="text" id="original_position_y" /></li>
 	<li><label for="convert_width">변환넓이</label> : <input type="text" id="convert_width" /></li>
 	<li><label for="convert_height">변환높이</label> : <input type="text" id="convert_height" /></li>
+	<li>유형 : <label for="pixel">픽셀</label><input type="radio" id="pixel" name="type" checked /> <label for="percentage">퍼센트</label><input type="radio" id="percentage" name="type" /></li>
 </ul>
 <h2>결과</h2>
 <ul>
@@ -153,6 +205,8 @@
 	<li>background-size:<span class="background_width">0</span> <span class="background_height">0</span>;</li>
 	<li>background-position:<span class="x">left</span> <span class="y">top</span>;</li>
 </ul>
-<div class="result">&nbsp;</div>
+<div class="result">
+	<div class="icon">&nbsp;</div>
+</div>
 </body>
 </html>

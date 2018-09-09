@@ -17,8 +17,14 @@ try {
 		 */
 		window.calcSprite = function(size, from, to, position) {
 			var result = {
-				size : 0,
-				position : 0
+				pixel : {
+					size : 0,
+					position : 0
+				},
+				percentage : {
+					size : 0,
+					position : 0
+				}
 			};
 			
 			//숫자형 변환
@@ -30,17 +36,19 @@ try {
 				var ratio = from / to;
 				
 				size = parseFloat(size, 10);
-				
+
 				//0초과일때
 				if(size > 0) {
-					result.size = size / ratio;
+					result.pixel.size = size / ratio;
+					result.percentage.size = result.pixel.size / to * 100;
 				}
 
 				position = parseFloat(position, 10);
-				
+
 				//NaN이 아니면서 Infinity가 아닐때
 				if(position && position.toString().indexOf('Infinity') === -1) {
-					result.position = position / ratio;
+					result.pixel.position = position / ratio;
+					result.percentage.position = Math.abs(result.pixel.position / (result.pixel.size - to) * 100);
 				}
 			}
 
