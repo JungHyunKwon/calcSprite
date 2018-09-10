@@ -114,9 +114,6 @@
 								}
 							}
 
-							//공백추가
-							size[j] += result[i][j].size + ' ';
-
 							//가로일때
 							if(i === 'horizontal') {
 								//좌표가 0일때
@@ -131,6 +128,7 @@
 							}
 
 							//공백추가
+							size[j] += result[i][j].size + ' ';
 							position[j] += result[i][j].position + ' ';
 						}
 					}
