@@ -20,23 +20,21 @@
 	<script src="js/calcSprite.min.js"></script>
 	<script>
 		$(function() {
-			var $image = $('#image'),
-				$originalWidth = $('#original_width'),
-				$originalHeight = $('#original_height'),
-				$originalPositionX = $('#original_position_x'),
-				$originalPositionY = $('#original_position_y'),
+			var $spriteImage = $('#sprite_image'),
+				$iconWidth = $('#icon_width'),
+				$iconHeight = $('#icon_height'),
+				$iconPositionX = $('#icon_position_x'),
+				$iconPositionY = $('#icon_position_y'),
 				$convertWidth = $('#convert_width'),
 				$convertHeight = $('#convert_height'),
 				$width = $('.width'),
 				$height = $('.height'),
-				$backgroundWidth = $('.background_width'),
-				$backgroundHeight = $('.background_height'),
-				$x = $('.x'),
-				$y = $('.y'),
+				$size = $('.size'),
+				$position = $('.position'),
 				$percentage = $('#percentage'),
 				$result = $('.result'),
 				$icon = $('.icon'),
-				sprite = {
+				spriteImage = {
 					src : '',
 					width : 0,
 					height : 0
@@ -44,14 +42,14 @@
 
 			function setResult(event) {
 				//src가 있을때
-				if(sprite.src) {
+				if(spriteImage.src) {
 					var convert = {
 							width : parseFloat($convertWidth.val(), 10),
 							height : parseFloat($convertHeight.val(), 10)
 						},
-						originalPosition = {
-							x : $originalPositionX.val(),
-							y : $originalPositionY.val()
+						iconPosition = {
+							x : $iconPositionX.val(),
+							y : $iconPositionY.val()
 						};
 
 					//변환넓이가 있을때
@@ -69,20 +67,28 @@
 					}
 					
 					//원본좌표에 x값이 left일때
-					if(originalPosition.x === 'left') {
-						originalPosition.x = 0;
+					if(iconPosition.x === 'left') {
+						iconPosition.x = 0;
 					}
 					
 					//원본좌표에 y값이 top일때
-					if(originalPosition.y === 'top') {
-						originalPosition.y = 0;
+					if(iconPosition.y === 'top') {
+						iconPosition.y = 0;
 					}
 
 					var result = {
-						horizontal : calcSprite(sprite.width, $originalWidth.val(), convert.width, originalPosition.x),
-						vertical : calcSprite(sprite.height, $originalHeight.val(), convert.height, originalPosition.y)
-					};
-					
+							horizontal : calcSprite(spriteImage.width, $iconWidth.val(), convert.width, iconPosition.x),
+							vertical : calcSprite(spriteImage.height, $iconHeight.val(), convert.height, iconPosition.y)
+						},
+						size = {
+							pixel : '',
+							percentage : ''
+						},
+						position = {
+							pixel : '',
+							percentage : ''
+						}
+
 					for(var i in result) {
 						for(var j in result[i]) {
 							//픽셀일때
@@ -107,7 +113,10 @@
 									result[i][j].size += '%';
 								}
 							}
-							
+
+							//공백추가
+							size[j] += result[i][j].size + ' ';
+
 							//가로일때
 							if(i === 'horizontal') {
 								//좌표가 0일때
@@ -120,42 +129,66 @@
 									result[i][j].position = 'top';
 								}
 							}
+
+							//공백추가
+							position[j] += result[i][j].position + ' ';
 						}
 					}
 
 					//퍼센트가 체크되어있을때
 					if($percentage.is(':checked')) {
-						result.horizontal = result.horizontal.percentage;
-						result.vertical = result.vertical.percentage;
+						size = size.percentage;
+						position = position.percentage;
 					}else{
-						result.horizontal = result.horizontal.pixel;
-						result.vertical = result.vertical.pixel;
+						size = size.pixel;
+						position = position.pixel;
 					}
 
+					//마지막 공백제거
+					size = size.substring(0, size.length - 1);
+					position = position.substring(0, position.length - 1);
+					
+					//공백 단위로 자르기
+					var sizeSplit = size.split(' '),
+						positionSplit = position.split(' ');
+
+					//가로 크기와 세로 크기가 같을때
+					if(sizeSplit[0] === sizeSplit[1]) {
+						size = sizeSplit[0];
+					}
+
+					//가로 위치와 세로 위치가 같을때
+					if(positionSplit[0] === positionSplit[1]) {
+						position = positionSplit[0];
+					}
+					
+					//결과 출력
 					$result.addClass('active').css({
 						width : convert.width,
 						height : convert.height
 					});
 					
+					//아이콘 생성
 					$icon.css({
-						backgroundImage : 'url(' + sprite.src + ')',
-						backgroundSize : result.horizontal.size + ' ' + result.vertical.size,
-						backgroundPosition : result.horizontal.position + ' ' + result.vertical.position
+						backgroundImage : 'url(' + spriteImage.src + ')',
+						backgroundSize : size,
+						backgroundPosition : position
 					});
-
+					
+					//css 생성
 					$width.text(convert.width);
 					$height.text(convert.height);
-					$backgroundWidth.text(result.horizontal.size);
-					$backgroundHeight.text(result.vertical.size);
-					$x.text(result.horizontal.position);
-					$y.text(result.vertical.position);
+					$size.text(size);
+					$position.text(position);
 				}
 			}
-
+			
+			//값 초기화
 			$percentage.prop('checked', false);
-			$image.add($originalWidth).add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).val('');
-
-			$image.on('change', function(event) {
+			$spriteImage.add($iconWidth).add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).val('');
+			
+			//이미지 업로드
+			$spriteImage.on('change', function(event) {
 				var fileReader = new FileReader();
 
 				fileReader.readAsDataURL(this.files[0]);
@@ -165,41 +198,43 @@
 					image.src = event.target.result;
 
 					$(image).on('load', function(event) {
-						sprite.src = image.src;
-						sprite.width = this.width;
-						sprite.height = this.height;
+						spriteImage.src = image.src;
+						spriteImage.width = this.width;
+						spriteImage.height = this.height;
 						setResult(event);
 					});
 				};
 			});
-
+			
+			//체크박스
 			$percentage.on('change', function(event) {
 				$result.toggleClass(this.id);
 				setResult(event);
 			});
-
-			$originalWidth.add($originalHeight).add($originalPositionX).add($originalPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
+			
+			//키를 눌렀을때
+			$iconWidth.add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
 		});
 	</script>
 </head>
 <body>
 <h1>calcSprite</h1>
 <ul>
-	<li><label for="image">이미지</label> : <input type="file" id="image" accept="image/*" /></li>
-	<li><label for="original_width">원본넓이</label> : <input type="text" id="original_width" /></li>
-	<li><label for="original_height">원본높이</label> : <input type="text" id="original_height" /></li>
-	<li><label for="original_position_x">원본좌표(x)</label> : <input type="text" id="original_position_x" /></li>
-	<li><label for="original_position_y">원본좌표(y)</label> : <input type="text" id="original_position_y" /></li>
-	<li><label for="convert_width">변환넓이</label> : <input type="text" id="convert_width" /></li>
-	<li><label for="convert_height">변환높이</label> : <input type="text" id="convert_height" /></li>
+	<li><label for="sprite_image">스프라이트 이미지</label> : <input type="file" id="sprite_image" accept="image/*" /></li>
+	<li><label for="icon_width">아이콘 넓이</label> : <input type="text" id="icon_width" /></li>
+	<li><label for="icon_height">아이콘 높이</label> : <input type="text" id="icon_height" /></li>
+	<li><label for="icon_position_x">아이콘 좌표(x)</label> : <input type="text" id="icon_position_x" /></li>
+	<li><label for="icon_position_y">아이콘 좌표(y)</label> : <input type="text" id="icon_position_y" /></li>
+	<li><label for="convert_width">변환 넓이</label> : <input type="text" id="convert_width" /></li>
+	<li><label for="convert_height">변환 높이</label> : <input type="text" id="convert_height" /></li>
 	<li><label for="percentage">퍼센트 : </label><input type="checkbox" id="percentage" /></li>
 </ul>
 <h2>결과</h2>
 <ul>
 	<li>width:<span class="width">0</span>;</li>
 	<li>height<span class="height">0</span>;</li>
-	<li>background-size:<span class="background_width">0</span> <span class="background_height">0</span>;</li>
-	<li>background-position:<span class="x">left</span> <span class="y">top</span>;</li>
+	<li>background-size:<span class="size">0</span>;</li>
+	<li>background-position:<span class="position">left top</span>;</li>
 </ul>
 <div class="result">
 	<div class="icon">&nbsp;</div>

@@ -6,9 +6,11 @@
 이름 | 형태 | 설명
 | :---- | :-- | :-- |
 size | number | 스프라이트 이미지 크기
-from | number | 원본 크기
-to | number | 변환 크기
+from | number | 아이콘 크기
+to | number | 변환크기
 position | number | 좌표
+
+한 축의 크기만 계산합니다.
 
 ## 반환
 ````javascript
