@@ -31,13 +31,13 @@ try {
 			from = parseFloat(from, 10);
 			to = parseFloat(to, 10);
 			
-			//0초과일때
+			//0초과일 때
 			if(from > 0 && to > 0) {
 				var ratio = from / to;
 				
 				size = parseFloat(size, 10);
 
-				//0초과일때
+				//0초과일 때
 				if(size > 0) {
 					result.pixel.size = size / ratio;
 					result.percentage.size = result.pixel.size / to * 100;
@@ -45,7 +45,7 @@ try {
 
 				position = parseFloat(position, 10);
 
-				//NaN이 아니면서 Infinity가 아닐때
+				//NaN이 아니면서 Infinity가 아닐 때
 				if(position && position.toString().indexOf('Infinity') === -1) {
 					result.pixel.position = position / ratio;
 					result.percentage.position = Math.abs(result.pixel.position / (result.pixel.size - to) * 100);
