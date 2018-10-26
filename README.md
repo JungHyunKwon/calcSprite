@@ -19,7 +19,7 @@ position | number | 좌표
         size : number,
 	    position : number
 	},
-    percentage : {
+    percent : {
         size : number,
 	    position : number
 	}

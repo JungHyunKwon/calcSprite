@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
 	<title>calcSprite</title>
 	<style>
-		@keyframes percentage {
+		@keyframes percent {
 			from {width:100%; height:100%;}
 			to {width:0; height:0;}
 		}
@@ -14,7 +14,7 @@
 		.result {visibility:hidden; opacity:0; transition-property:visibility, opacity; transition-duration:0.25s; transition-timing-function:linear;}
 		.result.active {visibility:visible; opacity:1;}
 		.result.active .icon {width:100%; height:100%; background-repeat:no-repeat; background-color:#000;}
-		.result.percentage.active .icon {animation:percentage 5s linear infinite alternate both;}
+		.result.percent.active .icon {animation:percent 5s linear infinite alternate both;}
 	</style>
 	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 	<script src="js/calcSprite.min.js"></script>
@@ -31,7 +31,7 @@
 				$height = $('.height'),
 				$size = $('.size'),
 				$position = $('.position'),
-				$percentage = $('#percentage'),
+				$percent = $('#percent'),
 				$result = $('.result'),
 				$icon = $('.icon'),
 				spriteImage = {
@@ -82,11 +82,11 @@
 						},
 						size = {
 							pixel : '',
-							percentage : ''
+							percent : ''
 						},
 						position = {
 							pixel : '',
-							percentage : ''
+							percent : ''
 						}
 
 					for(var i in result) {
@@ -134,9 +134,9 @@
 					}
 
 					//퍼센트가 체크되어 있을 때
-					if($percentage.is(':checked')) {
-						size = size.percentage;
-						position = position.percentage;
+					if($percent.is(':checked')) {
+						size = size.percent;
+						position = position.percent;
 					}else{
 						size = size.pixel;
 						position = position.pixel;
@@ -182,7 +182,7 @@
 			}
 			
 			//값 초기화
-			$percentage.prop('checked', false);
+			$percent.prop('checked', false);
 			$spriteImage.add($iconWidth).add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).val('');
 			
 			//이미지 업로드
@@ -205,7 +205,7 @@
 			});
 			
 			//체크박스
-			$percentage.on('change', function(event) {
+			$percent.on('change', function(event) {
 				$result.toggleClass(this.id);
 				setResult(event);
 			});
@@ -225,7 +225,7 @@
 	<li><label for="icon_position_y">아이콘 좌표(y)</label> : <input type="text" id="icon_position_y" /></li>
 	<li><label for="convert_width">변환 넓이</label> : <input type="text" id="convert_width" /></li>
 	<li><label for="convert_height">변환 높이</label> : <input type="text" id="convert_height" /></li>
-	<li><label for="percentage">퍼센트 : </label><input type="checkbox" id="percentage" /></li>
+	<li><label for="percent">퍼센트 : </label><input type="checkbox" id="percent" /></li>
 </ul>
 <h2>결과</h2>
 <ul>

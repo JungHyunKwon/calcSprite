@@ -21,7 +21,7 @@ try {
 					size : 0,
 					position : 0
 				},
-				percentage : {
+				percent : {
 					size : 0,
 					position : 0
 				}
@@ -40,7 +40,7 @@ try {
 				//0초과일 때
 				if(size > 0) {
 					result.pixel.size = size / ratio;
-					result.percentage.size = result.pixel.size / to * 100;
+					result.percent.size = result.pixel.size / to * 100;
 				}
 
 				position = parseFloat(position, 10);
@@ -48,7 +48,7 @@ try {
 				//NaN이 아니면서 Infinity가 아닐 때
 				if(position && position.toString().indexOf('Infinity') === -1) {
 					result.pixel.position = position / ratio;
-					result.percentage.position = Math.abs(result.pixel.position / (result.pixel.size - to) * 100);
+					result.percent.position = Math.abs(result.pixel.position / (result.pixel.size - to) * 100);
 				}
 			}
 
