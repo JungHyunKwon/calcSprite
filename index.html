@@ -41,7 +41,7 @@
 				};
 
 			function setResult(event) {
-				//src가 있을때
+				//src가 있을 때
 				if(spriteImage.src) {
 					var convert = {
 							width : parseFloat($convertWidth.val(), 10),
@@ -52,26 +52,26 @@
 							y : $iconPositionY.val()
 						};
 
-					//변환넓이가 있을때
+					//변환 넓이가 있을 때
 					if(convert.width > 0) {
 						convert.width += 'px';
 					}else{
 						convert.width = 0;
 					}
 					
-					//변환높이가 있을때
+					//변환 높이가 있을 때
 					if(convert.height > 0) {
 						convert.height += 'px';
 					}else{
 						convert.height = 0;
 					}
 					
-					//원본좌표에 x값이 left일때
+					//원본 좌표에 x 값이 left 일 때
 					if(iconPosition.x === 'left') {
 						iconPosition.x = 0;
 					}
 					
-					//원본좌표에 y값이 top일때
+					//원본 좌표에 y 값이 top 일 때
 					if(iconPosition.y === 'top') {
 						iconPosition.y = 0;
 					}
@@ -91,49 +91,49 @@
 
 					for(var i in result) {
 						for(var j in result[i]) {
-							//픽셀일때
+							//픽셀일 때
 							if(j === 'pixel') {
-								//좌표가 있을때
+								//좌표가 있을 때
 								if(result[i][j].position) {
 									result[i][j].position += 'px';
 								}
 
-								//크기가 있을때
+								//크기가 있을 때
 								if(result[i][j].size) {
 									result[i][j].size += 'px';
 								}
 							}else{
-								//좌표가 있을때
+								//좌표가 있을 때
 								if(result[i][j].position) {
 									result[i][j].position += '%';
 								}
 
-								//크기가 있을때
+								//크기가 있을 때
 								if(result[i][j].size) {
 									result[i][j].size += '%';
 								}
 							}
 
-							//가로일때
+							//가로일 때
 							if(i === 'horizontal') {
-								//좌표가 0일때
+								//좌표가 0일 때
 								if(!result[i][j].position) {
 									result[i][j].position = 'left';
 								}
 							}else{
-								//좌표가 0일때
+								//좌표가 0일 때
 								if(!result[i][j].position) {
 									result[i][j].position = 'top';
 								}
 							}
 
-							//공백추가
+							//공백 추가
 							size[j] += result[i][j].size + ' ';
 							position[j] += result[i][j].position + ' ';
 						}
 					}
 
-					//퍼센트가 체크되어있을때
+					//퍼센트가 체크되어 있을 때
 					if($percentage.is(':checked')) {
 						size = size.percentage;
 						position = position.percentage;
@@ -142,7 +142,7 @@
 						position = position.pixel;
 					}
 
-					//마지막 공백제거
+					//마지막 공백 제거
 					size = size.substring(0, size.length - 1);
 					position = position.substring(0, position.length - 1);
 					
@@ -150,12 +150,12 @@
 					var sizeSplit = size.split(' '),
 						positionSplit = position.split(' ');
 
-					//가로 크기와 세로 크기가 같을때
+					//가로 크기와 세로 크기가 같을 때
 					if(sizeSplit[0] === sizeSplit[1]) {
 						size = sizeSplit[0];
 					}
 
-					//가로 위치와 세로 위치가 같을때
+					//가로 위치와 세로 위치가 같을 때
 					if(positionSplit[0] === positionSplit[1]) {
 						position = positionSplit[0];
 					}
@@ -210,7 +210,7 @@
 				setResult(event);
 			});
 			
-			//키를 눌렀을때
+			//키를 눌렀을 때
 			$iconWidth.add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
 		});
 	</script>

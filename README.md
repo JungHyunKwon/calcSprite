@@ -25,4 +25,4 @@ position | number | 좌표
 	}
 }
 ````
-window객체에 calcSprite이라는 함수로 들어있습니다.
+window 객체에 calcSprite이라는 함수로 들어있습니다.
