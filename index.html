@@ -168,13 +168,13 @@
 
 					//퍼센트가 체크되어 있을 때
 					if(percent.checked) {
-						$result.addClass(percent.id);
 						size = size.percent;
 						position = position.percent;
+						$result.addClass(percent.id);
 					}else{
-						$result.removeClass(percent.id);
 						size = size.pixel;
 						position = position.pixel;
+						$result.removeClass(percent.id);
 					}
 					
 					//결과 출력
