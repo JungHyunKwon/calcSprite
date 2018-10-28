@@ -151,20 +151,6 @@
 					size = size.substring(0, size.length - 1);
 					position = position.substring(0, position.length - 1);
 					
-					//공백 단위로 자르기
-					var sizeSplit = size.split(' '),
-						positionSplit = position.split(' ');
-
-					//가로 크기와 세로 크기가 같을 때
-					if(sizeSplit[0] === sizeSplit[1]) {
-						size = sizeSplit[0];
-					}
-
-					//가로 위치와 세로 위치가 같을 때
-					if(positionSplit[0] === positionSplit[1]) {
-						position = positionSplit[0];
-					}
-					
 					//결과 출력
 					$result.addClass('active').css({
 						width : convert.width,
