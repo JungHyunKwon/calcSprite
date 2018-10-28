@@ -14,7 +14,7 @@
 		.result {visibility:hidden; opacity:0; transition-property:visibility, opacity; transition-duration:0.25s; transition-timing-function:linear;}
 		.result.active {visibility:visible; opacity:1;}
 		.result.active .icon {width:100%; height:100%; background-repeat:no-repeat; background-color:#000;}
-		.result.percent.active .icon {animation:percent 5s linear infinite alternate both;}
+		.result.percent.active .icon {animation:percent 5s linear infinite alternate;}
 	</style>
 	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 	<script src="js/calcSprite.min.js"></script>
@@ -49,6 +49,7 @@
 				$size = $('.size'),
 				$position = $('.position'),
 				$percent = $('#percent'),
+				percent = $percent[0],
 				$result = $('.result'),
 				$icon = $('.icon'),
 				spriteImage = {
@@ -57,6 +58,11 @@
 					height : 0
 				};
 
+			/**
+			 * @name 결과 적용
+			 * @param {object} event
+			 * @since 2018-07-13
+			 */
 			function setResult(event) {
 				//src가 있을 때
 				if(spriteImage.src) {
@@ -93,63 +99,83 @@
 						iconPosition.y = 0;
 					}
 
-					var result = {
+					var size = {},
+						position = {},
+						result = {
 							horizontal : calcSprite(spriteImage.width, $iconWidth.val(), convert.width, iconPosition.x),
 							vertical : calcSprite(spriteImage.height, $iconHeight.val(), convert.height, iconPosition.y)
-						},
-						size = {
-							pixel : '',
-							percent : ''
-						},
-						position = {
-							pixel : '',
-							percent : ''
-						}
-
-					for(var i in result) {
-						var resultI = result[i];
-
-						for(var j in resultI) {
-							var resultIJ = resultI[j],
-								sizeJ = parseFloat(resultIJ.size.toFixed(2), 10),
-								positionJ = parseFloat(resultIJ.position.toFixed(2), 10);
-
-							//픽셀일 때
-							if(j === 'pixel') {
-								sizeJ += 'px';
-								positionJ += 'px';
-							}else{
-								sizeJ += '%';
-								positionJ += '%';
-							}
-
-							//가로이면서 좌표가 0일 때
-							if(i === 'horizontal' && !resultIJ.position) {
-								positionJ = 'left';
-
-							//세로이면서 좌표가 0일 때
-							}else if(!resultIJ.position) {
-								positionJ = 'top';
-							}
-
-							//공백 추가
-							size[j] += sizeJ + ' ';
-							position[j] += positionJ + ' ';
-						}
+						};
+					
+					//가로에 대한 픽셀 크기가 있을 때
+					if(result.horizontal.pixel.size) {
+						result.horizontal.pixel.size = Math.round(result.horizontal.pixel.size) + 'px';
 					}
+					
+					//세로에 대한 픽셀 크기가 있을 때
+					if(result.vertical.pixel.size) {
+						result.vertical.pixel.size = Math.round(result.vertical.pixel.size) + 'px';
+					}
+					
+					//픽셀 크기 합성
+					size.pixel = result.horizontal.pixel.size + ' ' + result.vertical.pixel.size;
+
+					//가로에 대한 픽셀 좌표가 있을 때
+					if(result.horizontal.pixel.position) {
+						result.horizontal.pixel.position = Math.round(result.horizontal.pixel.position) + 'px';
+					}else{
+						result.horizontal.pixel.position = 'left';
+					}
+					
+					//세로에 대한 픽셀 좌표가 있을 때
+					if(result.vertical.pixel.position) {
+						result.vertical.pixel.position = Math.round(result.vertical.pixel.position) + 'px';
+					}else{
+						result.vertical.pixel.position = 'top';	
+					}
+					
+					//픽셀 위치 합성
+					position.pixel = result.horizontal.pixel.position + ' ' + result.vertical.pixel.position;
+
+					//가로에 대한 퍼센트 크기가 있을 때
+					if(result.horizontal.percent.size) {
+						result.horizontal.percent.size = parseFloat(result.horizontal.percent.size.toFixed(2), 10) + '%';
+					}
+					
+					//세로에 대한 퍼센트 크기가 있을 때
+					if(result.vertical.percent.size) {
+						result.vertical.percent.size = parseFloat(result.vertical.percent.size.toFixed(2), 10) + '%';
+					}
+					
+					//퍼센트 크기 합성
+					size.percent = result.horizontal.percent.size + ' ' + result.vertical.percent.size;
+
+					//가로에 대한 퍼센트 좌표가 있을 때
+					if(result.horizontal.percent.position) {
+						result.horizontal.percent.position = parseFloat(result.horizontal.percent.position.toFixed(2), 10) + '%';
+					}else{
+						result.horizontal.percent.position = 'left';
+					}
+					
+					//세로에 대한 퍼센트 좌표가 있을 때
+					if(result.vertical.percent.position) {
+						result.vertical.percent.position = parseFloat(result.vertical.percent.position.toFixed(2), 10) + '%';
+					}else{
+						result.vertical.percent.position = 'top';	
+					}
+					
+					//퍼센트 위치 합성
+					position.percent = result.horizontal.percent.position + ' ' + result.vertical.percent.position;
 
 					//퍼센트가 체크되어 있을 때
-					if($percent.is(':checked')) {
+					if(percent.checked) {
+						$result.addClass(percent.id);
 						size = size.percent;
 						position = position.percent;
 					}else{
+						$result.removeClass(percent.id);
 						size = size.pixel;
 						position = position.pixel;
 					}
-
-					//마지막 공백 제거
-					size = size.substring(0, size.length - 1);
-					position = position.substring(0, position.length - 1);
 					
 					//결과 출력
 					$result.addClass('active').css({
@@ -171,11 +197,7 @@
 					$position.text(position);
 				}
 			}
-			
-			//값 초기화
-			$percent.prop('checked', false);
-			$spriteImage.add($iconWidth).add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).val('');
-			
+
 			//이미지 업로드
 			$spriteImage.on('change', function(event) {
 				var fileReader = new FileReader();
@@ -190,17 +212,14 @@
 						spriteImage.src = image.src;
 						spriteImage.width = this.width;
 						spriteImage.height = this.height;
-						setResult(event);
+						setResult.call(this, event);
 					});
 				};
-			});
-			
+			}).triggerHandler('change');
+
 			//체크박스
-			$percent.on('change', function(event) {
-				$result.toggleClass(this.id);
-				setResult(event);
-			});
-			
+			$percent.on('change', setResult);
+
 			//키를 눌렀을 때
 			$iconWidth.add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
 		});
@@ -222,7 +241,7 @@
 <ul>
 	<li>width:<span class="width">0</span>;</li>
 	<li>height:<span class="height">0</span>;</li>
-	<li>background-size:<span class="size">0</span>;</li>
+	<li>background-size:<span class="size">0 0</span>;</li>
 	<li>background-position:<span class="position">left top</span>;</li>
 </ul>
 <div class="result">
