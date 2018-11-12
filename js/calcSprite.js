@@ -7,6 +7,7 @@ try {
 		'use strict';
 
 		/**
+		 * @name calcSprite
 		 * @since 2018-09-05
 		 * @param {number} size
 		 * @param {number} from
