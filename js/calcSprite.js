@@ -7,7 +7,6 @@ try {
 		'use strict';
 
 		/**
-		 * @name 스프라이트 계산
 		 * @since 2018-09-05
 		 * @param {number} size
 		 * @param {number} from
