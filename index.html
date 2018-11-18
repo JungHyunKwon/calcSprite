@@ -48,43 +48,33 @@
 			function setResult(event) {
 				//src가 있을 때
 				if(spriteImageSrc) {
-					var convertWidth = parseInt($convertWidth.val(), 10),
-						convertHeight = parseInt($convertHeight.val(), 10),
+					var convertWidth = parseInt($convertWidth.val(), 10) || 0,
+						convertHeight = parseInt($convertHeight.val(), 10) || 0,
 						iconPositionX = $iconPositionX.val(),
 						iconPositionY = $iconPositionY.val();
-
-					//변환 넓이가 있을 때
-					if(convertWidth > 0) {
-						convertWidth += 'px';
-					}else{
-						convertWidth = 0;
-					}
-					
-					//변환 높이가 있을 때
-					if(convertHeight > 0) {
-						convertHeight += 'px';
-					}else{
-						convertHeight = 0;
-					}
 					
 					//원본 좌표에 x 값이 left 일 때
 					if(iconPositionX === 'left') {
 						iconPositionX = 0;
+					}else{
+						iconPositionX = parseInt(iconPositionX, 10);
 					}
 					
 					//원본 좌표에 y 값이 top 일 때
 					if(iconPositionY === 'top') {
 						iconPositionY = 0;
+					}else{
+						iconPositionY = parseInt(iconPositionY, 10);
 					}
 
-					var horizontal = calcSprite(spriteImageWidth, $iconWidth.val(), convertWidth, iconPositionX),
+					var horizontal = calcSprite(spriteImageWidth, parseInt($iconWidth.val(), 10), convertWidth, iconPositionX),
 						horizontalPixel = horizontal.pixel,
 						horizontalPixelSize = horizontalPixel.size,
 						horizontalPixelPosition = horizontalPixel.position,
 						horizontalPercent = horizontal.percent,
 						horizontalPercentSize = horizontalPercent.size,
 						horizontalPercentPosition = horizontalPercent.position,
-						vertical = calcSprite(spriteImageHeight, $iconHeight.val(), convertHeight, iconPositionY),
+						vertical = calcSprite(spriteImageHeight, parseInt($iconHeight.val(), 10), convertHeight, iconPositionY),
 						verticalPixel = vertical.pixel,
 						verticalPixelSize = verticalPixel.size,
 						verticalPixelPosition = verticalPixel.position,
@@ -92,6 +82,16 @@
 						verticalPercentSize = verticalPercent.size,
 						verticalPercentPosition = verticalPercent.position;
 					
+					//0보다 클 때
+					if(convertWidth > 0) {
+						convertWidth += 'px';
+					}
+					
+					//0보다 클 때
+					if(convertHeight > 0) {
+						convertHeight += 'px';
+					}
+
 					//가로에 대한 픽셀 크기가 있을 때
 					if(horizontalPixelSize) {
 						horizontalPixelSize = horizontalPixelSize + 'px';

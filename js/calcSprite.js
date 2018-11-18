@@ -3,8 +3,51 @@
  * @version 1.0.0
  */
 try {
-	(function() {
+	(function(isNaN, isFinite, Math) {
 		'use strict';
+		
+		var _abs = Math.abs,
+			_round = Math.round;
+
+		/**
+		 * @name 정수 확인
+		 * @since 2017-12-06
+		 * @param {*} value
+		 * @return {boolean}
+		 */
+		function _isInt(value) {
+			return typeof value === 'number' && !isNaN(value) && isFinite(value);
+		}
+
+		/**
+		 * @name 소수점 절사
+		 * @param {number} value
+		 * @param {number} decimal
+		 * @return {number}
+		 * @since 2018-07-13
+		 */
+		function _toFixed(value, decimal) {
+			var result = NaN;
+			
+			//값이 정수일 때
+			if(_isInt(value)) {
+				result = value;
+				
+				//소수가 정수일 때
+				if(_isInt(decimal)) {
+					var splitValue = value.toString().split('.'),
+						splitValue1 = splitValue[1];
+					
+					//소수점이 있을 때
+					if(splitValue1) {
+						splitValue[1] = splitValue1.substring(0, decimal);
+						result = parseFloat(splitValue.join('.'), 10);
+					}
+				}
+			}
+
+			return result;
+		}
 
 		/**
 		 * @name calcSprite
@@ -26,35 +69,24 @@ try {
 					position : 0
 				}
 			};
-			
-			//숫자형 변환
-			from = parseFloat(from, 10);
-			to = parseFloat(to, 10);
-			
-			//0초과일 때
-			if(from > 0 && to > 0) {
-				var ratio = from / to;
-				
-				size = parseFloat(size, 10);
 
-				//0초과일 때
-				if(size > 0) {
-					result.pixel.size = size / ratio;
-					result.percent.size = result.pixel.size / to * 100;
-				}
+			//좌표가 정수이면서 나미저 변수들이 정수이면서 0 초과일 때
+			if(_isInt(size) && size > 0 && _isInt(from) && from > 0 && _isInt(to) && to > 0 && _isInt(position)) {
+				var ratio = from / to,
+					pixel = result.pixel,
+					pixelSize = size / ratio,
+					pixelPosition = position / ratio,
+					percent = result.percent;
 
-				position = parseFloat(position, 10);
-
-				//NaN이 아니면서 Infinity가 아닐 때
-				if(position && position.toString().indexOf('Infinity') === -1) {
-					result.pixel.position = position / ratio;
-					result.percent.position = Math.abs(result.pixel.position / (result.pixel.size - to) * 100);
-				}
+				pixel.size = _round(pixelSize);
+				percent.size = _toFixed(pixelSize / to * 100, 2);
+				pixel.position = _round(pixelPosition);
+				percent.position = _toFixed(_abs(pixelPosition / (pixelSize - to) * 100), 2);
 			}
 
 			return result;
 		};
-	})();
+	})(window.isNaN, window.isFinite, window.Math);
 }catch(e) {
 	console.error(e);
 }
