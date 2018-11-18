@@ -19,23 +19,6 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 	<script src="js/calcSprite.min.js"></script>
 	<script>
-		/**
-		 * @name 소수점 절사
-		 * @param {number} decimal
-		 * @return {string}
-		 * @since 2018-07-13
-		 */
-		Number.prototype.toFixed = function(decimal) {
-			var splitString = this.toString().split('.');
-			
-			//소수점이 있을 때
-			if(splitString[1]) {
-				splitString[1] = splitString[1].substring(0, decimal);
-			}
-
-			return splitString.join('.');
-		};
-
 		$(function() {
 			var $spriteImage = $('#sprite_image'),
 				$iconWidth = $('#icon_width'),
@@ -50,13 +33,12 @@
 				$position = $('.position'),
 				$percent = $('#percent'),
 				percent = $percent[0],
+				percentId = percent.id,
 				$result = $('.result'),
 				$icon = $('.icon'),
-				spriteImage = {
-					src : '',
-					width : 0,
-					height : 0
-				};
+				spriteImageSrc = '',
+				spriteImageWidth = 0,
+				spriteImageHeight = 0;
 
 			/**
 			 * @name 결과 적용
@@ -65,134 +47,134 @@
 			 */
 			function setResult(event) {
 				//src가 있을 때
-				if(spriteImage.src) {
-					var convert = {
-							width : parseFloat($convertWidth.val(), 10),
-							height : parseFloat($convertHeight.val(), 10)
-						},
-						iconPosition = {
-							x : $iconPositionX.val(),
-							y : $iconPositionY.val()
-						};
+				if(spriteImageSrc) {
+					var convertWidth = parseInt($convertWidth.val(), 10),
+						convertHeight = parseInt($convertHeight.val(), 10),
+						iconPositionX = $iconPositionX.val(),
+						iconPositionY = $iconPositionY.val();
 
 					//변환 넓이가 있을 때
-					if(convert.width > 0) {
-						convert.width += 'px';
+					if(convertWidth > 0) {
+						convertWidth += 'px';
 					}else{
-						convert.width = 0;
+						convertWidth = 0;
 					}
 					
 					//변환 높이가 있을 때
-					if(convert.height > 0) {
-						convert.height += 'px';
+					if(convertHeight > 0) {
+						convertHeight += 'px';
 					}else{
-						convert.height = 0;
+						convertHeight = 0;
 					}
 					
 					//원본 좌표에 x 값이 left 일 때
-					if(iconPosition.x === 'left') {
-						iconPosition.x = 0;
+					if(iconPositionX === 'left') {
+						iconPositionX = 0;
 					}
 					
 					//원본 좌표에 y 값이 top 일 때
-					if(iconPosition.y === 'top') {
-						iconPosition.y = 0;
+					if(iconPositionY === 'top') {
+						iconPositionY = 0;
 					}
 
-					var size = {},
-						position = {},
-						result = {
-							horizontal : calcSprite(spriteImage.width, $iconWidth.val(), convert.width, iconPosition.x),
-							vertical : calcSprite(spriteImage.height, $iconHeight.val(), convert.height, iconPosition.y)
-						};
+					var horizontal = calcSprite(spriteImageWidth, $iconWidth.val(), convertWidth, iconPositionX),
+						horizontalPixel = horizontal.pixel,
+						horizontalPixelSize = horizontalPixel.size,
+						horizontalPixelPosition = horizontalPixel.position,
+						horizontalPercent = horizontal.percent,
+						horizontalPercentSize = horizontalPercent.size,
+						horizontalPercentPosition = horizontalPercent.position,
+						vertical = calcSprite(spriteImageHeight, $iconHeight.val(), convertHeight, iconPositionY),
+						verticalPixel = vertical.pixel,
+						verticalPixelSize = verticalPixel.size,
+						verticalPixelPosition = verticalPixel.position,
+						verticalPercent = vertical.percent,
+						verticalPercentSize = verticalPercent.size,
+						verticalPercentPosition = verticalPercent.position;
 					
 					//가로에 대한 픽셀 크기가 있을 때
-					if(result.horizontal.pixel.size) {
-						result.horizontal.pixel.size = Math.round(result.horizontal.pixel.size) + 'px';
+					if(horizontalPixelSize) {
+						horizontalPixelSize = horizontalPixelSize + 'px';
 					}
 					
 					//세로에 대한 픽셀 크기가 있을 때
-					if(result.vertical.pixel.size) {
-						result.vertical.pixel.size = Math.round(result.vertical.pixel.size) + 'px';
+					if(verticalPixelSize) {
+						verticalPixelSize = verticalPixelSize + 'px';
 					}
 					
 					//픽셀 크기 합성
-					size.pixel = result.horizontal.pixel.size + ' ' + result.vertical.pixel.size;
+					var pixelSize = horizontalPixelSize + ' ' + verticalPixelSize;
 
 					//가로에 대한 픽셀 좌표가 있을 때
-					if(result.horizontal.pixel.position) {
-						result.horizontal.pixel.position = Math.round(result.horizontal.pixel.position) + 'px';
+					if(horizontalPixelPosition) {
+						horizontalPixelPosition = horizontalPixelPosition + 'px';
 					}else{
-						result.horizontal.pixel.position = 'left';
+						horizontalPixelPosition = 'left';
 					}
 					
 					//세로에 대한 픽셀 좌표가 있을 때
-					if(result.vertical.pixel.position) {
-						result.vertical.pixel.position = Math.round(result.vertical.pixel.position) + 'px';
+					if(verticalPixelPosition) {
+						verticalPixelPosition = verticalPixelPosition + 'px';
 					}else{
-						result.vertical.pixel.position = 'top';	
+						verticalPixelPosition = 'top';	
 					}
 					
 					//픽셀 위치 합성
-					position.pixel = result.horizontal.pixel.position + ' ' + result.vertical.pixel.position;
+					var pixelPosition = horizontalPixelPosition + ' ' + verticalPixelPosition;
 
 					//가로에 대한 퍼센트 크기가 있을 때
-					if(result.horizontal.percent.size) {
-						result.horizontal.percent.size = parseFloat(result.horizontal.percent.size.toFixed(2), 10) + '%';
+					if(horizontalPercentSize) {
+						horizontalPercentSize = horizontalPercentSize + '%';
 					}
 					
 					//세로에 대한 퍼센트 크기가 있을 때
-					if(result.vertical.percent.size) {
-						result.vertical.percent.size = parseFloat(result.vertical.percent.size.toFixed(2), 10) + '%';
+					if(verticalPercentSize) {
+						verticalPercentSize = verticalPercentSize + '%';
 					}
 					
 					//퍼센트 크기 합성
-					size.percent = result.horizontal.percent.size + ' ' + result.vertical.percent.size;
+					var percentSize = horizontalPercentSize + ' ' + verticalPercentSize;
 
 					//가로에 대한 퍼센트 좌표가 있을 때
-					if(result.horizontal.percent.position) {
-						result.horizontal.percent.position = parseFloat(result.horizontal.percent.position.toFixed(2), 10) + '%';
+					if(horizontalPercentPosition) {
+						horizontalPercentPosition = horizontalPercentPosition + '%';
 					}else{
-						result.horizontal.percent.position = 'left';
+						horizontalPercentPosition = 'left';
 					}
 					
 					//세로에 대한 퍼센트 좌표가 있을 때
-					if(result.vertical.percent.position) {
-						result.vertical.percent.position = parseFloat(result.vertical.percent.position.toFixed(2), 10) + '%';
+					if(verticalPercentPosition) {
+						verticalPercentPosition = verticalPercentPosition + '%';
 					}else{
-						result.vertical.percent.position = 'top';	
+						verticalPercentPosition = 'top';	
 					}
 					
-					//퍼센트 위치 합성
-					position.percent = result.horizontal.percent.position + ' ' + result.vertical.percent.position;
-
+					var percentPosition = horizontalPercentPosition + ' ' + verticalPercentPosition, //퍼센트 위치 합성
+						size = pixelSize,
+						position = pixelPosition;
+					
 					//퍼센트가 체크되어 있을 때
 					if(percent.checked) {
-						size = size.percent;
-						position = position.percent;
-						$result.addClass(percent.id);
-					}else{
-						size = size.pixel;
-						position = position.pixel;
-						$result.removeClass(percent.id);
+						size = percentSize;
+						position = percentPosition;
 					}
 					
 					//결과 출력
-					$result.addClass('active').css({
-						width : convert.width,
-						height : convert.height
+					$result.css({
+						width : convertWidth,
+						height : convertHeight
 					});
 					
 					//아이콘 생성
 					$icon.css({
-						backgroundImage : 'url(' + spriteImage.src + ')',
+						backgroundImage : 'url(' + spriteImageSrc + ')',
 						backgroundSize : size,
 						backgroundPosition : position
 					});
 					
 					//css 생성
-					$width.text(convert.width);
-					$height.text(convert.height);
+					$width.text(convertWidth);
+					$height.text(convertHeight);
 					$size.text(size);
 					$position.text(position);
 				}
@@ -208,22 +190,33 @@
 
 					fileReader.readAsDataURL(files[0]);
 					fileReader.onloadend = function(event) {
-						var image = new Image();
+						var image = new Image(),
+							src = event.target.result;
 						
-						image.src = event.target.result;
+						image.src = src;
 
 						$(image).on('load', function(event) {
-							spriteImage.src = image.src;
-							spriteImage.width = this.width;
-							spriteImage.height = this.height;
-							setResult.call(this, event);
+							spriteImageSrc = src;
+							spriteImageWidth = this.width;
+							spriteImageHeight = this.height;
+							$result.addClass('active');
+							setResult();
 						});
 					};
 				}
 			}).triggerHandler('change');
 
 			//체크박스
-			$percent.on('change', setResult);
+			$percent.on('change', function(event) {
+				//퍼센트가 체크되어 있을 때
+				if(percent.checked) {
+					$result.addClass(percentId);
+				}else{
+					$result.removeClass(percentId);
+				}
+
+				setResult();
+			});
 
 			//키를 눌렀을 때
 			$iconWidth.add($iconHeight).add($iconPositionX).add($iconPositionY).add($convertWidth).add($convertHeight).on('keyup', setResult);
