@@ -3,11 +3,8 @@
  * @version 1.0.0
  */
 try {
-	(function(isNaN, isFinite, Math) {
+	(function() {
 		'use strict';
-		
-		var _abs = Math.abs,
-			_round = Math.round;
 
 		/**
 		 * @name 정수 확인
@@ -78,15 +75,15 @@ try {
 					pixelPosition = position / ratio,
 					percent = result.percent;
 
-				pixel.size = _round(pixelSize);
+				pixel.size = Math.round(pixelSize);
 				percent.size = _toFixed(pixelSize / to * 100, 2);
-				pixel.position = _round(pixelPosition);
-				percent.position = _toFixed(_abs(pixelPosition / (pixelSize - to) * 100), 2);
+				pixel.position = Math.round(pixelPosition);
+				percent.position = _toFixed(Math.abs(pixelPosition / (pixelSize - to) * 100), 2);
 			}
 
 			return result;
 		};
-	})(window.isNaN, window.isFinite, window.Math);
+	})();
 }catch(e) {
 	console.error(e);
 }
