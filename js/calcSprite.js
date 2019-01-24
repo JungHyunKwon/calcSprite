@@ -7,12 +7,12 @@ try {
 		'use strict';
 
 		/**
-		 * @name 정수 확인
+		 * @name 숫자 확인
 		 * @since 2017-12-06
 		 * @param {*} value
 		 * @return {boolean}
 		 */
-		function _isInt(value) {
+		function _isNumber(value) {
 			return typeof value === 'number' && !isNaN(value) && isFinite(value);
 		}
 
@@ -27,11 +27,11 @@ try {
 			var result = NaN;
 			
 			//값이 정수일 때
-			if(_isInt(value)) {
+			if(_isNumber(value)) {
 				result = value;
 				
 				//소수가 정수일 때
-				if(_isInt(decimal)) {
+				if(_isNumber(decimal)) {
 					var splitValue = value.toString().split('.'),
 						splitValue1 = splitValue[1];
 					
@@ -68,7 +68,7 @@ try {
 			};
 
 			//좌표가 정수이면서 나미저 변수들이 정수이면서 0 초과일 때
-			if(_isInt(size) && size > 0 && _isInt(from) && from > 0 && _isInt(to) && to > 0 && _isInt(position)) {
+			if(_isNumber(size) && size > 0 && _isNumber(from) && from > 0 && _isNumber(to) && to > 0 && _isNumber(position)) {
 				var ratio = from / to,
 					pixel = result.pixel,
 					pixelSize = size / ratio,
