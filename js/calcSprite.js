@@ -26,16 +26,16 @@ try {
 		function _toFixed(value, decimal) {
 			var result = NaN;
 			
-			//값이 정수일 때
+			//값이 숫자일 때
 			if(_isNumber(value)) {
 				result = value;
 				
-				//소수가 정수일 때
+				//소수가 숫자일 때
 				if(_isNumber(decimal)) {
 					var splitValue = value.toString().split('.'),
 						splitValue1 = splitValue[1];
 					
-					//소수점이 있을 때
+					//소숫점이 있을 때
 					if(splitValue1) {
 						splitValue[1] = splitValue1.substring(0, decimal);
 						result = parseFloat(splitValue.join('.'), 10);
@@ -67,7 +67,7 @@ try {
 				}
 			};
 
-			//좌표가 정수이면서 나미저 변수들이 정수이면서 0 초과일 때
+			//좌표가 숫자이면서 나미저 변수들이 숫자이면서 0 초과일 때
 			if(_isNumber(size) && size > 0 && _isNumber(from) && from > 0 && _isNumber(to) && to > 0 && _isNumber(position)) {
 				var ratio = from / to,
 					pixel = result.pixel,
