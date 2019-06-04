@@ -12,7 +12,7 @@ try {
 		 * @param {*} value
 		 * @return {boolean}
 		 */
-		function isNumeric(value) {
+		function _isNumeric(value) {
 			return typeof value === 'number' && !isNaN(value) && isFinite(value);
 		}
 
@@ -23,15 +23,15 @@ try {
 		 * @return {number}
 		 * @since 2018-07-13
 		 */
-		function toFixed(value, decimal) {
+		function _toFixed(value, decimal) {
 			var result = NaN;
 			
 			//값이 숫자일 때
-			if(isNumeric(value)) {
+			if(_isNumeric(value)) {
 				result = value;
 				
 				//소수가 숫자일 때
-				if(isNumeric(decimal)) {
+				if(_isNumeric(decimal)) {
 					var splitValue = value.toString().split('.'),
 						firstOfSplitValue = splitValue[1];
 					
@@ -68,7 +68,7 @@ try {
 			};
 
 			//좌표가 숫자이면서 나미저 변수들이 숫자이면서 0 초과일 때
-			if(isNumeric(size) && size > 0 && isNumeric(from) && from > 0 && isNumeric(to) && to > 0 && isNumeric(position)) {
+			if(_isNumeric(size) && size > 0 && _isNumeric(from) && from > 0 && _isNumeric(to) && to > 0 && _isNumeric(position)) {
 				var ratio = from / to,
 					pixel = result.pixel,
 					pixelSize = size / ratio,
@@ -76,9 +76,9 @@ try {
 					percent = result.percent;
 
 				pixel.size = Math.round(pixelSize);
-				percent.size = toFixed(pixelSize / to * 100, 2);
+				percent.size = _toFixed(pixelSize / to * 100, 2);
 				pixel.position = Math.round(pixelPosition);
-				percent.position = toFixed(Math.abs(pixelPosition / (pixelSize - to) * 100), 2);
+				percent.position = _toFixed(Math.abs(pixelPosition / (pixelSize - to) * 100), 2);
 			}
 
 			return result;
